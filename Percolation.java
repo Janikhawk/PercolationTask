@@ -4,6 +4,8 @@
  *  Description:
  **************************************************************************** */
 
+import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
@@ -30,26 +32,26 @@ public class Percolation {
 
     public void open(int row, int col)    // open site (row, col) if it is not open already
     {
-        if ( row-1 < 0 || row > gridSize || col-1 < 0 || col > gridSize) throw new IllegalArgumentException("some error");
+        if (row - 1 < 0 || row > gridSize || col-1 < 0 || col > gridSize) throw new IllegalArgumentException("some error");
         grid[row-1][col-1] = true;
         openCells++;
-        //left side
-        if ( col-2 >= 0 && isOpen(row - 1,col - 2))
+        // left side
+        if (col - 2 >= 0 && isOpen(row - 1, col - 2))
         {
-            uf.union(((row - 1)*gridSize + col - 1 ), (row - 1)*gridSize + col - 2);
+            uf.union(((row - 1)*gridSize + col - 1), (row - 1)*gridSize + col - 2);
         }
-        //up side
-        if ( row-2 >= 0 && isOpen(row - 2,col - 1))
+        // up side
+        if (row-2 >= 0 && isOpen(row - 2, col - 1))
         {
-            uf.union(((row - 1)*gridSize + col - 1 ), (row - 2)*gridSize + col - 1);
+            uf.union(((row - 1)*gridSize + col - 1), (row - 2)*gridSize + col - 1);
         }
-        //right side
-        if ( col > gridSize && isOpen(row - 1, col))
+        // right side
+        if (col <= gridSize && isOpen(row - 1, col))
         {
-            uf.union(((row - 1)*gridSize + col - 1 ), (row - 1)*gridSize + col);
+            uf.union(((row - 1)*gridSize + col - 1), (row - 1)*gridSize + col);
         }
-        //bottom side
-        if ( row > gridSize && isOpen(row - 2,col - 1))
+        // bottom side
+        if (row <= gridSize && isOpen(row - 2, col - 1))
         {
             uf.union(((row - 1)*gridSize + col - 1 ), (row)*gridSize + col - 1);
         }
@@ -58,13 +60,14 @@ public class Percolation {
 
     public boolean isOpen(int row, int col)  // is site (row, col) open?
     {
-        if ( row <= 0 || row > gridSize || col <= 0 || col > gridSize) throw new IllegalArgumentException("some error");
+        StdOut.println("row "+row+ " col "+col);
+        if (row - 1 < 0 || row > gridSize || col-1 < 0 || col > gridSize) throw new IllegalArgumentException("some error");
         return grid[row-1][col-1];
     }
 
     public boolean isFull(int row, int col)  // is site (row, col) full?
     {
-        if ( row <= 0 || row > gridSize || col <= 0 || col > gridSize) throw new IllegalArgumentException("some error");
+        if (row <= 0 || row > gridSize || col <= 0 || col > gridSize) throw new IllegalArgumentException("some error");
         return !grid[row-1][col-1];
     }
 
@@ -78,19 +81,32 @@ public class Percolation {
         boolean check = false;
         for (int i = 0; i < gridSize; i++)
         {
-            for (int j = 0; j < gridSize; j++){
+            for (int j = 0; j < gridSize; j++)
+            {
                 if (uf.connected(gridSize + i-1, (gridSize-1)*gridSize+j-1)) check = true;
             }
         }
         return check;
     }
 
+    public void openrandom()
+    {
+        int indexX = StdRandom.uniform(0, gridSize-1);
+        int indexY = StdRandom.uniform(0, gridSize-1);
+        while(!isOpen(indexX, indexY))
+        {
+            open(indexX, indexY);
+            indexX = StdRandom.uniform(0, gridSize-1);
+            indexY = StdRandom.uniform(0, gridSize-1);
+        }
+    }
+
     public static void main(String[] args)
     {
-        int N = 10;
-        Percolation p = new Percolation(N);
-        for (int j = 0; j <= N - 1; j++) {
-            for (int i = 0; i <= N - 1; i++) {
+        int n = 10;
+        Percolation p = new Percolation(n);
+        for (int j = 0; j <= n - 1; j++) {
+            for (int i = 0; i <= n - 1; i++) {
                 System.out.print(p.grid[i][j]);
                 System.out.print("\t");
             }
