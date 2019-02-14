@@ -17,7 +17,7 @@ public class Percolation {
 
     public Percolation(int n)                // create n-by-n grid, with all sites blocked
     {
-        grid = new boolean[n][n];
+        grid = new boolean[n+1][n+1];
         if (n <= 0) throw new IllegalArgumentException("some error");
         uf = new WeightedQuickUnionUF(n*n);
         gridSize = n;
@@ -47,7 +47,7 @@ public class Percolation {
         }
         if (row > 1 && isOpen(row - 1, col)) // up
         {
-            System.out.format("Up: Connecting %d to %d\n", (row - 2) * gridSize + col - 1, (row - 1) * gridSize + col - 1);
+            System.out.format("Up: Connecting %d to %d\n", (row - 1) * gridSize + col - 1, (row - 2) * gridSize + col - 1);
             uf.union((row - 1) * gridSize + col - 1, (row - 2) * gridSize + col - 1);
         }
         if (row < gridSize && isOpen(row+1, col)) // down
