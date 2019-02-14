@@ -21,9 +21,9 @@ public class Percolation {
         if (n <= 0) throw new IllegalArgumentException("some error");
         uf = new WeightedQuickUnionUF(n*n);
         gridSize = n;
-        for (int i = 0; i < n; i++)
+        for (int i = 1; i <= n; i++)
         {
-            for (int j = 0; j < n; j++)
+            for (int j = 1; j <= n; j++)
             {
                 grid[i][j] = false;
             }
@@ -32,28 +32,28 @@ public class Percolation {
 
     public void open(int row, int col)    // open site (row, col) if it is not open already
     {
-        if (row - 1 < 0 || row > gridSize || col-1 < 0 || col > gridSize) throw new IllegalArgumentException("some error");
-        grid[row-1][col-1] = true;
+        if (row <= 0 || row > gridSize || col <= 0 || col > gridSize) throw new IllegalArgumentException("some error");
+        grid[row][col] = true;
         openCells++;
         // left side
-        if (col - 2 >= 0 && isOpen(row - 1, col - 2))
-        {
-            uf.union(((row - 1)*gridSize + col - 1), (row - 1)*gridSize + col - 2);
+        if (col > 1 && isOpen(row, col-1)) { // left
+            System.out.format("Left: Connecting %d to %d\n", (row - 1) * gridSize + col - 1, (row - 1) * gridSize + col - 2);
+            uf.union((row - 1) * gridSize + col - 1, (row - 1) * gridSize + col - 2);
         }
-        // up side
-        if (row-2 >= 0 && isOpen(row - 2, col - 1))
+        if (col < gridSize && isOpen(row, col+1)) // right
         {
-            uf.union(((row - 1)*gridSize + col - 1), (row - 2)*gridSize + col - 1);
+            System.out.format("Right: Connecting %d to %d\n", (row - 1) * gridSize + col - 1, (row - 1) * gridSize + col);
+            uf.union((row - 1) * gridSize + col - 1, (row - 1) * gridSize + col);
         }
-        // right side
-        if (col <= gridSize && isOpen(row - 1, col))
+        if (row > 1 && isOpen(row - 1, col)) // up
         {
-            uf.union(((row - 1)*gridSize + col - 1), (row - 1)*gridSize + col);
+            System.out.format("Up: Connecting %d to %d\n", (row - 2) * gridSize + col - 1, (row - 1) * gridSize + col - 1);
+            uf.union((row - 1) * gridSize + col - 1, (row - 2) * gridSize + col - 1);
         }
-        // bottom side
-        if (row <= gridSize && isOpen(row - 2, col - 1))
+        if (row < gridSize && isOpen(row+1, col)) // down
         {
-            uf.union(((row - 1)*gridSize + col - 1 ), (row)*gridSize + col - 1);
+            System.out.format("Connecting %d to %d\n", (row - 1) * gridSize + col - 1, row * gridSize + col - 1);
+            uf.union((row - 1) * gridSize + col - 1, row * gridSize + col - 1);
         }
 
     }
@@ -61,14 +61,18 @@ public class Percolation {
     public boolean isOpen(int row, int col)  // is site (row, col) open?
     {
         StdOut.println("row "+row+ " col "+col);
-        if (row - 1 < 0 || row > gridSize || col-1 < 0 || col > gridSize) throw new IllegalArgumentException("some error");
-        return grid[row-1][col-1];
+        if (row <= 0 || row > gridSize || col <= 0 || col > gridSize) throw new IllegalArgumentException("some error");
+        return grid[row][col];
     }
 
     public boolean isFull(int row, int col)  // is site (row, col) full?
     {
         if (row <= 0 || row > gridSize || col <= 0 || col > gridSize) throw new IllegalArgumentException("some error");
-        return !grid[row-1][col-1];
+        /*for (int i = 0; i < gridSize; i++ )
+        {
+            if(uf.connected(col*gridSize))
+        }*/
+        return !grid[row][col];
     }
 
     public int numberOfOpenSites()       // number of open sites
@@ -78,7 +82,7 @@ public class Percolation {
 
     public boolean percolates()              // does the system percolate?
     {
-        boolean check = false;
+        /*boolean check = false;
         for (int i = 0; i < gridSize; i++)
         {
             for (int j = 0; j < gridSize; j++)
@@ -86,7 +90,14 @@ public class Percolation {
                 if (uf.connected(gridSize + i-1, (gridSize-1)*gridSize+j-1)) check = true;
             }
         }
-        return check;
+        return check;*/
+
+        for (int i = (gridSize * (gridSize - 1)); i < (gridSize * gridSize); i++) {
+            for (int i2 = 0; i2 < gridSize; i2++) {
+                if (uf.connected(i, i2)) return true;
+            }
+        }
+        return false;
     }
 
     public void openrandom()
